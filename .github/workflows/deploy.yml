@@ -1,6 +1,6 @@
 name: Deploy Go
 
-on:
+"on":
   push:
     branches:
       - main
@@ -16,27 +16,33 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create ENV
+        shell: bash
         run: |
-          echo "${{ secrets.ENV_FILE }}" | base64 -d > .env
+          echo "${{ secrets.ENV_FILE }}" | base64 -d > app/.env
 
       - name: Build Docker Image
+        shell: bash
         run: |
+          cd app
           docker build -t backend-go:latest .
 
       - name: Stop Old Container
+        shell: bash
         run: |
           docker rm -f backend-go || true
 
       - name: Run Container
+        shell: bash
         run: |
           docker run -d \
             --name backend-go \
             --restart always \
-            --env-file .env \
+            --env-file app/.env \
             -p 8080:8080 \
             backend-go:latest
 
       - name: Check Container
+        shell: bash
         run: |
           docker ps -a
           docker logs --tail 100 backend-go || true
