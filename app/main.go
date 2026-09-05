@@ -3,7 +3,6 @@ package main
 import (
 	"app/config"
 	"app/handlers"
-	"app/models"
 	"fmt"
 	"log"
 	"net/http"
@@ -29,15 +28,6 @@ func main() {
 
 	fmt.Println("Database connected!")
 
-	err = db.AutoMigrate(
-		&models.User{},
-		&models.BlogPost{},
-		&models.Comment{},
-	)
-	if err != nil {
-		log.Fatal("Migration failed:", err)
-	}
-
 	http.HandleFunc("/register", handlers.Register(db))
 	http.HandleFunc("/login", handlers.Login(db))
 	http.HandleFunc("/posts", handlers.Posts(db))
@@ -47,5 +37,4 @@ func main() {
 	fmt.Println("Server running on http://0.0.0.0:8080")
 
 	log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
-
 }
