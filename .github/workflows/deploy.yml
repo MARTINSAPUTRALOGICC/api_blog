@@ -22,22 +22,22 @@ steps:
 
   - name: Build Docker Image
     run: |
-      docker build -t backend-go:latest .
+      docker build -t api_blog:latest .
 
   - name: Stop Old Container
     run: |
-      docker rm -f backend-go || true
+      docker rm -f api_blog || true
 
   - name: Run Container
     run: |
       docker run -d \
-        --name backend-go \
+        --name api_blog \
         --restart always \
         --env-file .env \
         -p 8080:8080 \
-        backend-go:latest
+        api_blog:latest
 
   - name: Check Container
     run: |
       docker ps -a
-      docker logs --tail 100 backend-go || true
+      docker logs --tail 100 api_blog || true
