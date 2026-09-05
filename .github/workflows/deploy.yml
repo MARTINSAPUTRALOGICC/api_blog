@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on:
       - self-hosted
-      - spb-running
+      - api-go
 
     steps:
       - name: Checkout Repository
