@@ -1,0 +1,43 @@
+name: Deploy Go
+
+on:
+push:
+branches:
+- main
+
+jobs:
+deploy:
+runs-on:
+- self-hosted
+- spb-running
+
+
+steps:
+  - name: Checkout Repository
+    uses: actions/checkout@v4
+
+  - name: Create ENV
+    run: |
+      echo "${{ secrets.ENV_FILE }}" | base64 -d > .env
+
+  - name: Build Docker Image
+    run: |
+      docker build -t backend-go:latest .
+
+  - name: Stop Old Container
+    run: |
+      docker rm -f backend-go || true
+
+  - name: Run Container
+    run: |
+      docker run -d \
+        --name backend-go \
+        --restart always \
+        --env-file .env \
+        -p 8080:8080 \
+        backend-go:latest
+
+  - name: Check Container
+    run: |
+      docker ps -a
+      docker logs --tail 100 backend-go || true
